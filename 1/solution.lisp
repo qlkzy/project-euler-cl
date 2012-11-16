@@ -17,7 +17,7 @@
       x
       0))
 
-(defun solve (n)
+(defun problem-1 (n)
   "Return the sum of the natural numbers below N
 which are multiples of 3 or 5."
   (apply #'+ 
