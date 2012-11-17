@@ -45,9 +45,7 @@ representation of X, in order."
    (complement #'palindromic-number-p)
    (all-products-of-n-digit-numbers n)))
 
-(defun largest (l)
-  "Return the largest member of the list L."
-  (car (sort l #'>)))
+(defun largest (l) (apply #'max l))
 
 (defun problem-4 (n)
   "Return the largest palindromic product of 2 n-digit-numbers."
