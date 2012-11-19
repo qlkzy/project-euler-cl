@@ -33,47 +33,49 @@ to integer multiples of that number to 0."
        when (= 1 (sbit sieve i))
        collect i)))
 
-(defparameter *primes* (find-primes 10000))
-
-(defclass triangle-number-generator ()
-  ((running-sum :initform 0)
-   (n           :initform 1)))
-
-(defmethod next-triangle-number ((g triangle-number-generator))
-  (setf (slot-value g 'running-sum)
-        (+ (slot-value g 'n)
-           (slot-value g 'running-sum)))
-  (setf (slot-value g 'n) (+ (slot-value g 'n) 1))
-  (slot-value g 'running-sum))
+(defparameter *primes* (find-primes 1000000))
 
 (defun factor? (f x)
   (= 0 (mod x f)))
 
-(defun count-factors-incr (x curr so-far)
+(defun push-factor (f l)
   (cond
-    ((= x 1) (+ 1 so-far))
-    ((factor? curr x)
-     (count-factors-incr (/ x curr) curr (+ 1 so-far)))
-    (t (count-factors-incr x (+ 1 curr) so-far))))
+    ((and (consp (car l))
+          (= (caar l)
+             f))
+     (cons (cons (caar l)
+                 (+ (cdar l) 1))
+           (cdr l)))
+    (t (cons (cons f 1) l))))
 
-(defun count-factors-primes (x remaining-primes so-far)
+(defun prime-factors-impl (x remaining-primes so-far)
   (let ((thisprime (car remaining-primes)))
     (cond
-      ((= x 1) (+ 1 so-far))
+      ((= x 1) so-far)
       ((factor? thisprime x)
-       (count-factors-primes (/ x thisprime) remaining-primes (+ 1 so-far)))
-      ((consp (cdr remaining-primes))
-       (count-factors-primes x (cdr remaining-primes) so-far))
-      (t (count-factors-incr x (car remaining-primes) so-far)))))
+       (prime-factors-impl (/ x thisprime) remaining-primes (push-factor thisprime so-far)))
+      (t (prime-factors-impl x (cdr remaining-primes) so-far)))))
 
-(defun count-factors (x)
-  (count-factors-primes x *primes* 2))
+(defun prime-factors (x)
+  (prime-factors-impl x *primes* '()))
+
+(defun ndivs (factors)
+  (reduce #'*
+          (mapcar (lambda (x) (+ 1 (cdr x)))
+                  factors)))
+
+(defun n-divisors (x)
+  (ndivs (prime-factors x)))
+
+(defun nth-triangle (n)
+  (* n (/ (+ 1 n) 2)))
 
 (defun problem-12 (n)
   "Return the value of the first triangle number to have over N
 divisors."
-  (let ((tgen (make-instance 'triangle-number-generator)))
-    (do ((tnum (next-triangle-number tgen)
-               (next-triangle-number tgen)))
-        ((< n (count-factors tnum)) tnum))))
+  (loop 
+     for i from 1
+     for x = (nth-triangle i)
+     when (< n (n-divisors x))
+     return x))
   
