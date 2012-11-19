@@ -8,7 +8,7 @@ to integer multiples of that number to 0."
   (loop 
      for i
      from (* number 2)                  ;second multiple
-     to (1- (length sieve))             ;0-based indexing
+     below (length sieve)
      by number
      do (setf (sbit sieve i) 0)))
 
@@ -24,14 +24,14 @@ to integer multiples of that number to 0."
 (defun find-primes (n)
   "Return a list of all the prime numbers less than N."
   (let ((sieve (make-array n
-                       :element-type 'bit
-                       :initial-element 1)))
+                           :element-type 'bit
+                           :initial-element 1)))
     (do-sieving sieve)
     ;; collect numbers corresponding to set bits
-    (loop for i from 2 to (1- n)
+    (loop for i from 2 to (- n 1)
        when (= 1 (sbit sieve i))
        collect i)))
 
 (defun problem-10 (n)
   "Sum all the prime numbers less than N."
-  (apply #'+ (find-primes n)))
+  (reduce #'+ (find-primes n)))

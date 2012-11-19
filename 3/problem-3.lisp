@@ -3,20 +3,20 @@
 
 (defconstant problem-3-number 600851475143)
 
-(defun multiple-of (n x)
-  "Return true if X is a multiple of N, NIL otherwise."
-  (eq 0 (mod x n)))
+(defun factor? (f x)
+  "Return true if F is a factor of X, NIL otherwise."
+  (= 0 (mod x f)))
 
 (defun trim-by-factor (f x)
   "If F is a factor of X, return X/F; otherwise return X."
-  (if (multiple-of f x)
+  (if (factor? f x)
       (/ x f)
       x))
 
 (defun next-possible-factor (f x)
   "Return F if F is a factor of X; otherwise return the next possible
 factor of X."
-  (if (multiple-of f x)
+  (if (factor? f x)
       f
       (+ f 1)))
 
@@ -26,6 +26,6 @@ factor of X."
     (do ((f 2 (next-possible-factor f x))
          (x n (trim-by-factor f x)))
         ((= x 1) factors)
-        (when (multiple-of f x)
-            (setq factors (cons f factors))))))
+        (when (factor? f x)
+            (push f factors)))))
          

@@ -5,13 +5,14 @@
 
 (defun square-of-sums (l)
   "Return the square of the sums of a list"
-  (expt (apply #'+ l) 2))
+  (expt (reduce #'+ l) 2))
 
 (defun sum-of-squares (l)
   "Return the sum of the squares of a list"
-  (apply #'+
-         (mapcar (lambda (x) (expt x 2))
-                 l)))
+  (reduce #'+
+          (mapcar (lambda (x) (expt x 2))
+                  l)))
+
 (defun problem-6 (n)
   "Return the difference between the square of the sums and the sum of
   the squares of the first N natural numbers."

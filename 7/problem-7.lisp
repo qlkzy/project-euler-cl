@@ -2,25 +2,28 @@
 
 ;; Finding the 10001st prime
 
-(defun multiple-of (n x)
-  "Return true if X is a multiple of N, NIL otherwise."
-  (eq 0 (mod x n)))
+;; Hilariously inefficient
 
-(defun multiple-of-none (ns x)
-  "Return true if X is a multiple of none of the elements of NS, NIL
+(defun multiple-of (f x)
+  "Return true if X is a multiple of F, NIL otherwise."
+  (eq 0 (mod x f)))
+
+(defun multiple-of-none (fs x)
+  "Return true if X is a multiple of none of the elements of FS, NIL
 otherwise."
-  (loop for f in ns
-     never (multiple-of f x)))
+  (notany (lambda (f) (multiple-of f x))
+          fs))
 
 (defun next-prime (primes)
   "Given a list of primes (in reverse-sorted order), produce the next
 prime."
-  (do ((x (1+ (car primes))
-          (1+ x)))
-      ((multiple-of-none primes x) x)))
+  (loop
+     for p from (+ 1 (car primes))
+     when (multiple-of-none primes p)
+     return p))
 
 (defun nth-prime (n)
-  (do ((i 1 (1+ i))
-       (primes '(2) 
-               (cons (next-prime primes) primes)))
-      ((= i n) (car primes))))
+  (loop
+     for i from 1 to n
+     for primes = '(2) then (cons (next-prime primes) primes)
+     finally (return (first primes)))))

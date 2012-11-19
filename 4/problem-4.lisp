@@ -23,8 +23,8 @@
 (defun digits (x)
   "Return a list containing the digits of in the decimal
 representation of X, in order."
-  (loop for i from (1- (count-digits x)) downto 0
-       collect (nth-digit i x)))
+  (loop for i from (- (count-digits x) 1) downto 0
+       collecting (nth-digit i x)))
 
 (defun palindromic-number-p (x)
   "Return true if X is palindromic, false otherwise."
@@ -38,14 +38,14 @@ representation of X, in order."
   "Return a list of all the products of all the N-digit numbers."
   (let ((numbers (all-n-digit-numbers n)))
      (loop for x in numbers
-        appending (loop for y in numbers collect (* x y)))))
+        appending (loop for y in numbers collecting (* x y)))))
 
 (defun all-palindromic-products-of-n-digit-numbers (n)
   (remove-if
    (complement #'palindromic-number-p)
    (all-products-of-n-digit-numbers n)))
 
-(defun largest (l) (apply #'max l))
+(defun largest (l) (reduce #'max l))
 
 (defun problem-4 (n)
   "Return the largest palindromic product of 2 n-digit-numbers."
